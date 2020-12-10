@@ -1,9 +1,8 @@
-package data
+package database
 
 import (
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sync"
@@ -16,6 +15,7 @@ var (
 	data *Data
 	once sync.Once
 )
+
 // Data manages the connection to the database.
 type Data struct {
 	DB *sql.DB
@@ -43,11 +43,6 @@ func initDB() {
 		fmt.Println("We are connected to the database")
 	}
 
-	err = MakeMigration(db)
-	if err != nil {
-		log.Fatal("This is the error:", err)
-	}
-
 	data = &Data{
 		DB: db,
 	}
@@ -61,11 +56,6 @@ func initDBTest() {
 		log.Fatal("This is the error:", err)
 	} else {
 		fmt.Println("We are connected to the database test")
-	}
-
-	err = MakeMigrationTest(db)
-	if err != nil {
-		log.Fatal("This is the error:", err)
 	}
 
 	data = &Data{
@@ -104,34 +94,4 @@ func GetConnectionTest() (*sql.DB, error) {
 
 	uri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
 	return sql.Open(DbDriver, uri)
-}
-
-// MakeMigration creates all the tables in the database
-func MakeMigration(db *sql.DB) error {
-	b, err := ioutil.ReadFile("./database/models.sql")
-	if err != nil {
-		return err
-	}
-
-	rows, err := db.Query(string(b))
-	if err != nil {
-		return err
-	}
-
-	return rows.Close()
-}
-
-// MakeMigrationTest creates all the tables in the database
-func MakeMigrationTest(db *sql.DB) error {
-	b, err := ioutil.ReadFile("../../database/models.sql")
-	if err != nil {
-		return err
-	}
-
-	rows, err := db.Query(string(b))
-	if err != nil {
-		return err
-	}
-
-	return rows.Close()
 }

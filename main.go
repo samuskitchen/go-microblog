@@ -3,7 +3,7 @@ package main
 import (
 	_ "github.com/joho/godotenv/autoload"
 	log "github.com/sirupsen/logrus"
-	data "microblog/database"
+	"microblog/database"
 	"microblog/handler/server"
 	"os"
 	"os/signal"
@@ -22,13 +22,19 @@ func main() {
 	}()
 
 	// connection to the database.
-	db := data.New()
+	db := database.New()
 	if err := db.DB.Ping(); err != nil {
 		log.Fatal(err)
 	}
 
-	conn := &data.Data{
+	conn := &database.Data{
 		DB: db.DB,
+	}
+
+	//Versioning the database
+	err = database.VersionedDB(db, false)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	DaemonPort := os.Getenv("DAEMON_PORT")
@@ -45,5 +51,5 @@ func main() {
 
 	// Attempt a graceful shutdown.
 	_ = serv.Close()
-	_ = data.Close()
+	_ = database.Close()
 }

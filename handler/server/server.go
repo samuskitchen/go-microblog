@@ -22,7 +22,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // NewApplication initialized a new server with configuration.
-func NewApplication(port string, conn *data.Data) *Server {
+func NewApplication(port string, conn *database.Data) *Server {
 
 	router := chi.NewRouter()
 

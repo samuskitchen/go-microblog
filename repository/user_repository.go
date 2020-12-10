@@ -24,9 +24,9 @@ func (ur *UserRepository) GetAllUser(ctx context.Context) ([]user.User, error) {
 
 	var users []user.User
 	for rows.Next() {
-		var user user.User
-		_ = rows.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, &user.Picture, &user.CreatedAt, &user.UpdatedAt)
-		users = append(users, user)
+		var userRow user.User
+		_ = rows.Scan(&userRow.ID, &userRow.FirstName, &userRow.LastName, &userRow.Username, &userRow.Email, &userRow.Picture, &userRow.CreatedAt, &userRow.UpdatedAt)
+		users = append(users, userRow)
 	}
 
 	return users, nil

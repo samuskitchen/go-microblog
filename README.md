@@ -96,13 +96,3 @@ go tool cover -html=coverage.out
 
 go tool cover -func=coverage.out
 ```
-
-#### Test Handler
-```
-go test -covermode=count -coverprofile=coverage.out -coverpkg=./handler/server/v1 ./test/handler/server/v1/
-
-go tool cover -html=coverage.out
-
-go tool cover -func=coverage.out
-```
-

@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+
+  postgres_microblog:
+    image: postgres:12
+    container_name: postgres_microblog
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data_base_init.sql:/docker-entrypoint-initdb.d/data_base_init.sql
+
+  app:
+    container_name: microblog_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    restart: on-failure
+    image: microblog_api
+    links:
+      - postgres_microblog
+    depends_on:
+      - postgres_microblog
+    environment:
+      - "DAEMON_PORT=9000"
+      - "DB_HOST=postgres_microblog"
+      - "DB_DRIVER=postgres"
+      - "DB_PASSWORD=admin"
+      - "DB_NAME=postgres"
+      - "DB_PORT=5432"
+      - "DB_USER=postgres"
+      - "SCRIPTS_PATH=file:///migrations"
