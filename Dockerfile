@@ -8,8 +8,28 @@ LABEL maintainer="Daniel De La Pava Suarez <daniel·samkit@gmail.com>"
 ## Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git
 
+# Add the keys
+ARG gitlab_user
+ARG gitlab_password
+ARG gitlab_token
+
 # Set the current working directory inside the container
 WORKDIR /app
+
+# Configuration of gitlab to be able to access the private library
+RUN git config --global url."https://${gitlab_user}:${gitlab_token}@gitlab.com".insteadOf "https://gitlab.com"
+#RUN git config --global url."https://oauth2:${gitlab_token}@gitlab.com".insteadOf "https://gitlab.com"
+
+# Create a netrc file using the credentials specified using --build-arg
+#RUN printf "machine gitlab.com\n\
+#    login ${gitlab_user}\n\
+#    password ${gitlab_password}\n"\
+#    >> /root/.netrc
+
+#RUN chmod 600 /root/.netrc
+
+# Required to access go mod from private middleware-securit repo
+ENV GOPRIVATE gitlab.com/daniel.delapava/middleware-securit
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
